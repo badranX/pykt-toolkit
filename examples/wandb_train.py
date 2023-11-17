@@ -30,6 +30,9 @@ def main(params):
         import wandb
         wandb.init()
 
+    import pdb; 
+    pdb.set_trace()
+
     set_seed(params["seed"])
     model_name, dataset_name, fold, emb_type, save_dir = params["model_name"], params["dataset_name"], \
         params["fold"], params["emb_type"], params["save_dir"]
