@@ -1,4 +1,5 @@
 import os, sys
+import shutil
 import argparse
 from pykt.preprocess.split_datasets import main as split_concept
 from pykt.preprocess.split_datasets_que import main as split_question
@@ -21,9 +22,17 @@ dname2paths = {
     "ednet5w": "../data/ednet/",
     "peiyou": "../data/peiyou/grade3_students_b_200.csv"
 }
+
+dname2url = {
+ 'assist2009': 'https://gitlab.com/badranx/public_data/-/raw/d3f4d4e4270140c5b388461404603b782f8a8f5b/assistment/assist2009/skill_builder_data_corrected_collapsed.csv.zip'
+}
+ 
 configf = "../configs/data_config.json"
 
 if __name__ == "__main__":
+    abspath = os.path.abspath(__file__)
+    os.chdir(os.path.dirname(abspath))
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-d","--dataset_name", type=str, default="assist2015")
     parser.add_argument("-f","--file_path", type=str, default="../data/peiyou/grade3_students_b_200.csv")
@@ -40,9 +49,20 @@ if __name__ == "__main__":
     if args.dataset_name=="peiyou":
         dname2paths["peiyou"] = args.file_path
         print(f"fpath: {args.file_path}")
+
+    dataset_path = dname2paths[args.dataset_name]
+    if not os.path.exists(dataset_path):
+        dirname = "/".join(dataset_path.split("/")[0:-1])
+        if os.path.exists(dirname):
+            shutil.rmtree(dirname)
+        os.mkdir(dirname)
+        durl = dname2url[args.dataset_name]
+        BigfileDownloader.download(durl, f'downloading {args.dataset_name}', dataset_path+'.zip')
+        unziped_files = DecompressionUtil.unzip_file(zip_src=dataset_path+'.zip', dst_dir=dirname)
+        dname2paths[args.dataset_name] = os.path.join(dirname, unziped_files[0])
     
     if args.file_encoding:
-        FileEncodingUtil.change_encoding(dname2paths[args.dataset_name], args.file_encoding)
+        FileEncodingUtil.change_encoding(dataset_path, args.file_encoding)
 
     dname, writef = process_raw_data(args.dataset_name, dname2paths)
     print("-"*50)

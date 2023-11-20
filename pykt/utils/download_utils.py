@@ -30,6 +30,7 @@ class DecompressionUtil(object):
             fz = zipfile.ZipFile(zip_src, 'r')
             for file in tqdm(fz.namelist(), desc='unzip...', ncols=100):
                 fz.extract(file, dst_dir)       
+            return fz.namelist()
         else:
             raise Exception(f'{zip_src} is not a zip file')
         
