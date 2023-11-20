@@ -3,6 +3,7 @@ import argparse
 from pykt.preprocess.split_datasets import main as split_concept
 from pykt.preprocess.split_datasets_que import main as split_question
 from pykt.preprocess import data_proprocess, process_raw_data
+from pykt.utils import BigfileDownloader, DecompressionUtil, FileEncodingUtil
 
 dname2paths = {
     "assist2009": "../data/assist2009/skill_builder_data_corrected_collapsed.csv",
@@ -26,6 +27,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-d","--dataset_name", type=str, default="assist2015")
     parser.add_argument("-f","--file_path", type=str, default="../data/peiyou/grade3_students_b_200.csv")
+    parser.add_argument("-e","--file_encoding", type=str, default='')
     parser.add_argument("-m","--min_seq_len", type=int, default=3)
     parser.add_argument("-l","--maxlen", type=int, default=200)
     parser.add_argument("-k","--kfold", type=int, default=5)
@@ -38,6 +40,10 @@ if __name__ == "__main__":
     if args.dataset_name=="peiyou":
         dname2paths["peiyou"] = args.file_path
         print(f"fpath: {args.file_path}")
+    
+    if args.file_encoding:
+        FileEncodingUtil.change_encoding(dname2paths[args.dataset_name], args.file_encoding)
+
     dname, writef = process_raw_data(args.dataset_name, dname2paths)
     print("-"*50)
     print(f"dname: {dname}, writef: {writef}")
