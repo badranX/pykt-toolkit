@@ -42,7 +42,9 @@ def process_raw_data(dataset_name,dname2paths):
     elif dataset_name == "ednet5w":
         dname, writef = read_data_from_csv(readf, writef, dataset_name=dataset_name)
     elif dataset_name != "nips_task34":#default case
-        read_data_from_csv(readf, writef)
+        task_name= 'task_3_4'
+        metadir = os.path.join(dname, "metadata")
+        read_data_from_csv(readf, metadir, task_name, write_file=writef)
     else:
         metap = os.path.join(dname, "metadata")
         read_data_from_csv(readf, metap, "task_3_4", writef)
